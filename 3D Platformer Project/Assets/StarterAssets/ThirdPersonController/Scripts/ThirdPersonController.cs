@@ -98,6 +98,13 @@ namespace StarterAssets
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
 
+        //Checkpoint info
+        private Vector3 active_checkpoint_pos;
+        private Vector3 spawn_rot;
+
+        //Death Zone gameobject
+        [SerializeField]private GameObject death_zone;
+
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
 #endif
@@ -386,6 +393,28 @@ namespace StarterAssets
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Checkpoint"))
+            {
+
+                Checkpoint checkpoint = other.gameObject.GetComponent<Checkpoint>();
+                if (!checkpoint.activated)
+                {
+                    active_checkpoint_pos = other.gameObject.transform.position;
+                    checkpoint.activated = true;
+                    if(other.gameObject.name == "Detection Zone 1")
+                    {
+                        death_zone.SetActive(true);
+                    }
+                }
+            }
+            else if (other.CompareTag("Death Zone"))
+            {
+                transform.position = active_checkpoint_pos;
             }
         }
     }
