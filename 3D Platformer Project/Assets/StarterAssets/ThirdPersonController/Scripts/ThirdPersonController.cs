@@ -100,10 +100,8 @@ namespace StarterAssets
 
         //Checkpoint info
         private Vector3 active_checkpoint_pos;
-        private Vector3 spawn_rot;
+        private Vector3 spawn_pos;
 
-        //Death Zone gameobject
-        [SerializeField]private GameObject death_zone;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -157,6 +155,8 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+             spawn_pos = new Vector3(0f, 3.5f, 0f);
         }
 
         private void Update()
@@ -406,15 +406,15 @@ namespace StarterAssets
                 {
                     active_checkpoint_pos = other.gameObject.transform.position;
                     checkpoint.activated = true;
-                    if(other.gameObject.name == "Detection Zone 1")
-                    {
-                        death_zone.SetActive(true);
-                    }
                 }
             }
             else if (other.CompareTag("Death Zone"))
             {
                 transform.position = active_checkpoint_pos;
+            }
+            else if (other.gameObject.name == "End Zone")
+            {
+                active_checkpoint_pos = spawn_pos;
             }
         }
     }

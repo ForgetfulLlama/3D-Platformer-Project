@@ -1,19 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TranslatePlatform : MonoBehaviour
 {
+    private float startPoint;
     [SerializeField] private float moveRange;
     [SerializeField] private float speed;
-    public string movementAxis;
+    private float endpoint;
+    public string axis;
     public float wait_time = 0;
-    private float startPoint;
+    
     private bool platform_paused;
     // Start is called before the first frame update
     void Start()
     {
-        switch (movementAxis)
+        switch (axis)
         {
             case "x":
                 startPoint = transform.position.x;
@@ -24,7 +27,26 @@ public class TranslatePlatform : MonoBehaviour
             case "z":
                 startPoint = transform.position.z;
                 break;
+            case "xy":
+                startPoint = transform.position.x;
+                break;
+            case "yz":
+                startPoint = transform.position.y;
+                break;
+            case "xz":
+                startPoint = transform.position.z;
+                break;
+            default:
+                break;
         }
+        endpoint = startPoint + moveRange;
+        if (startPoint > endpoint)
+        {
+            endpoint = startPoint;
+            startPoint = endpoint + moveRange;
+            speed *= -1;
+        }
+
     }
 
     // Update is called once per frame
@@ -32,66 +54,79 @@ public class TranslatePlatform : MonoBehaviour
     {
         if (!platform_paused)
         {
-            switch (movementAxis)
-            {
-                case "x":
-                    TranslatePlatformX();
-                    break;
-                case "y":
-                    TranslatePlatformY();
-                    break;
-                case "z":
-                    TranslatePlatformZ();
-                    break;
-            }
+            MovePlatform();
         }
     }
-
-    private void TranslatePlatformX()
+   
+    
+    private void MovePlatform()
     {
-        if (transform.position.x > startPoint + moveRange)
+        Vector3 direction = Vector3.zero;
+        float currPos = 0f;
+        switch (axis)
         {
-            transform.position = new Vector3(startPoint+moveRange, transform.position.y, transform.position.z);
+            case "x":
+                direction = Vector3.right;
+                currPos = transform.position.x;
+                break;
+            case "y":
+                direction = Vector3.up;
+                currPos = transform.position.y;
+                break;
+            case "z":
+                direction = Vector3.forward;
+                currPos = transform.position.z;
+                break;
+            case "xy":
+                direction = new Vector3(1f, 1f, 0f);
+                currPos = transform.position.x;
+                break;
+            case "yz":
+                direction = new Vector3(0f, 1f, 1f);
+                currPos = transform.position.y;
+                break;
+            case "xz":
+                direction = new Vector3(1f, 0f, 1f);
+                currPos = transform.position.z;
+                break;
+            default:
+                break;
+        }
+        if (currPos > endpoint)
+        {
+            transform.position = CorrectPosition(axis, endpoint);
             FlipDirection();
         }
-        else if (transform.position.x < startPoint - moveRange)
+        else if (currPos < startPoint)
         {
-            transform.position = new Vector3(startPoint-moveRange, transform.position.y, transform.position.z);
+            transform.position = CorrectPosition(axis, startPoint);
             FlipDirection();
         }
-
-        transform.Translate(Vector3.right * speed * Time.deltaTime);
+        transform.Translate(direction * speed * Time.deltaTime);
     }
-
-    private void TranslatePlatformY()
+    
+    private Vector3 CorrectPosition(string axis, float fixedPos)
     {
-        if (transform.position.y > startPoint + moveRange)
+        float xPos = transform.position.x;
+        float yPos = transform.position.y;
+        float zPos = transform.position.z;
+        switch (axis)
         {
-            transform.position = new Vector3(transform.position.x, startPoint + moveRange, transform.position.z);
-            FlipDirection();
+            case "x":
+                return new Vector3(fixedPos, yPos, zPos);
+            case "y":
+                return new Vector3(xPos, fixedPos, zPos);
+            case "z":
+                return new Vector3(xPos, yPos, fixedPos);
+            case "xy":
+                return new Vector3(fixedPos, yPos, zPos);
+            case "yz":
+                return new Vector3(xPos, fixedPos, zPos);
+            case "xz":
+                return new Vector3(xPos, yPos, fixedPos);
+            default:
+                return Vector3.zero;
         }
-        else if (transform.position.y < startPoint - moveRange)
-        {
-            transform.position = new Vector3(transform.position.x, startPoint - moveRange, transform.position.z);
-            FlipDirection();
-        }
-
-        transform.Translate(Vector3.up * speed * Time.deltaTime);
-    }
-
-    private void TranslatePlatformZ()
-    {
-        if (transform.position.z > startPoint + moveRange)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, startPoint + moveRange);
-            FlipDirection();
-        }
-        else if(transform.position.z < startPoint - moveRange)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, startPoint - moveRange);
-            FlipDirection();
-        }
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
     private void FlipDirection()
