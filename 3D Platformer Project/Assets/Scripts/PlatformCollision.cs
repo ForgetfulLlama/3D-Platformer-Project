@@ -6,11 +6,13 @@ public class PlatformCollision : MonoBehaviour
 {
     [SerializeField] Transform platform;
     [SerializeField] string playerTag = "Player";
+    private Transform originalParent;
     // Start is called before the first frame update
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(playerTag))
         {
+            originalParent = other.gameObject.transform.parent;
             other.gameObject.transform.parent = platform;
         }
     }
@@ -19,7 +21,7 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.CompareTag(playerTag))
         {
-            other.gameObject.transform.parent = null;
+            other.gameObject.transform.parent = originalParent;
         }
     }
 }

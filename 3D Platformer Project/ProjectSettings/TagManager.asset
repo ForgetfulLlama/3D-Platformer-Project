@@ -8,6 +8,7 @@ TagManager:
   - Death Zone
   - Checkpoint
   - Projectile
+  - PlayerBody
   layers:
   - Default
   - TransparentFX
