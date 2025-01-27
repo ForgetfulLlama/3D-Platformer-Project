@@ -11,10 +11,13 @@ public class BodyCollision : MonoBehaviour
     {
 
     }
-
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
         _controller.CollisionDetected(collision);
     }
+    /*private void OnTriggerEnter(Collider other)
+    {
+        _controller.CollisionDetected(other);
+    }*/
 }
 

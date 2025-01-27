@@ -440,12 +440,10 @@ namespace StarterAssets
             }
         }
 
-        public void CollisionDetected(Collision collision) 
+        public void CollisionDetected(Collider collision) 
         {
-            Debug.Log("Collision detected");
-            if (!isRagdoll && collision.gameObject.CompareTag("Projectile"))
+            if (!isRagdoll && collision.CompareTag("Projectile"))
             {
-                Debug.Log("Ragdoll Triggered");
                 TriggerRagdoll(false);
                 StartCoroutine(Respawn());
             }
@@ -454,30 +452,41 @@ namespace StarterAssets
         private void TriggerRagdoll(bool isAnimating)
         {
             isRagdoll = !isAnimating;
-            /*foreach(Rigidbody rb in rigidbodies)
+            foreach(Rigidbody rb in rigidbodies)
             {
                 rb.isKinematic = isAnimating;
-            }*/
+            }
+            /*
             foreach(Collider collider in colliders)
             {
-                if (collider.gameObject.name != "Head")
+                if (collider.gameObject.name != "Head" && collider.gameObject.name != "UpperChest"
+                    && collider.gameObject.name != "Right_UpperArm" && collider.gameObject.name != "Left_UpperArm")
                 {
                     collider.enabled = !isAnimating;
                 }
-            }
+            }*/
             GetComponent<Animator>().enabled = isAnimating;
             GetComponent<CharacterController>().enabled = isAnimating;
         }
 
         private IEnumerator Respawn()
         {
-            Debug.Log("Counting down");
             yield return new WaitForSeconds(spawn_delay);
-            Debug.Log("Respawning");
             TriggerRagdoll(true);
             transform.position = active_checkpoint_pos;
             MoveSpeed = baseMoveSpeed;
             SprintSpeed = baseSprintSpeed;
         }
+
+        /*private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            Debug.Log("Collision detected");
+            Debug.Log(hit.gameObject.name);
+            if (!isRagdoll && hit.gameObject.CompareTag("Projectile"))
+            {
+                TriggerRagdoll(false);
+                StartCoroutine(Respawn());
+            }
+        }*/
     }
 }
