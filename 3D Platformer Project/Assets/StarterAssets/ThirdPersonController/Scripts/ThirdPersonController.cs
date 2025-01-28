@@ -1,4 +1,7 @@
 ﻿ using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -17,9 +20,11 @@ namespace StarterAssets
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
+        private float baseMoveSpeed;
 
         [Tooltip("Sprint speed of the character in m/s")]
         public float SprintSpeed = 5.335f;
+        private float baseSprintSpeed;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -102,6 +107,11 @@ namespace StarterAssets
         private Vector3 active_checkpoint_pos;
         private Vector3 spawn_pos;
 
+        //Ragdoll stuff
+        private Rigidbody[] rigidbodies;
+        private Collider[] colliders;
+        private bool isRagdoll;
+        private float spawn_delay = 3.0f;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -114,6 +124,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool _controllerActive;
 
         private bool IsCurrentDeviceMouse
         {
@@ -155,17 +166,28 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+            spawn_pos = new Vector3(0f, 1f, 0f);
+            active_checkpoint_pos = spawn_pos;
 
-             spawn_pos = new Vector3(0f, 3.5f, 0f);
+            baseMoveSpeed = MoveSpeed;
+            baseSprintSpeed = SprintSpeed;
+
+            rigidbodies = GetComponentsInChildren<Rigidbody>();
+            colliders = GetComponentsInChildren<Collider>();
+            TriggerRagdoll(true);
         }
 
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
+            _controllerActive = GetComponent<CharacterController>().enabled;
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
+            if (_controllerActive)
+            {
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
+            }
         }
 
         private void LateUpdate()
@@ -276,7 +298,7 @@ namespace StarterAssets
 
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+                                new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
             // update animator if using character
             if (_hasAnimator)
@@ -417,5 +439,54 @@ namespace StarterAssets
                 active_checkpoint_pos = spawn_pos;
             }
         }
+
+        public void CollisionDetected(Collider collision) 
+        {
+            if (!isRagdoll && collision.CompareTag("Projectile"))
+            {
+                TriggerRagdoll(false);
+                StartCoroutine(Respawn());
+            }
+        }
+
+        private void TriggerRagdoll(bool isAnimating)
+        {
+            isRagdoll = !isAnimating;
+            foreach(Rigidbody rb in rigidbodies)
+            {
+                rb.isKinematic = isAnimating;
+            }
+            /*
+            foreach(Collider collider in colliders)
+            {
+                if (collider.gameObject.name != "Head" && collider.gameObject.name != "UpperChest"
+                    && collider.gameObject.name != "Right_UpperArm" && collider.gameObject.name != "Left_UpperArm")
+                {
+                    collider.enabled = !isAnimating;
+                }
+            }*/
+            GetComponent<Animator>().enabled = isAnimating;
+            GetComponent<CharacterController>().enabled = isAnimating;
+        }
+
+        private IEnumerator Respawn()
+        {
+            yield return new WaitForSeconds(spawn_delay);
+            TriggerRagdoll(true);
+            transform.position = active_checkpoint_pos;
+            MoveSpeed = baseMoveSpeed;
+            SprintSpeed = baseSprintSpeed;
+        }
+
+        /*private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            Debug.Log("Collision detected");
+            Debug.Log(hit.gameObject.name);
+            if (!isRagdoll && hit.gameObject.CompareTag("Projectile"))
+            {
+                TriggerRagdoll(false);
+                StartCoroutine(Respawn());
+            }
+        }*/
     }
 }

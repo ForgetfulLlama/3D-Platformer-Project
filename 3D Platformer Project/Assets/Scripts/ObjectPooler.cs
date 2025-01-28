@@ -12,6 +12,7 @@ public class ObjectPooler : MonoBehaviour
     void Awake()
     {
         SharedInstance = this;
+        //Time.timeScale = 0.5f;
     }
 
     void Start()
