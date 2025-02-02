@@ -166,7 +166,7 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
-            spawn_pos = new Vector3(0f, 1f, 0f);
+            spawn_pos = new Vector3(0f, 2f, 0f);
             active_checkpoint_pos = spawn_pos;
 
             baseMoveSpeed = MoveSpeed;
@@ -442,7 +442,7 @@ namespace StarterAssets
 
         public void CollisionDetected(Collider collision) 
         {
-            if (!isRagdoll && collision.CompareTag("Projectile"))
+            if (!isRagdoll && (collision.CompareTag("Projectile") || collision.CompareTag("Car")))
             {
                 TriggerRagdoll(false);
                 StartCoroutine(Respawn());
@@ -456,15 +456,6 @@ namespace StarterAssets
             {
                 rb.isKinematic = isAnimating;
             }
-            /*
-            foreach(Collider collider in colliders)
-            {
-                if (collider.gameObject.name != "Head" && collider.gameObject.name != "UpperChest"
-                    && collider.gameObject.name != "Right_UpperArm" && collider.gameObject.name != "Left_UpperArm")
-                {
-                    collider.enabled = !isAnimating;
-                }
-            }*/
             GetComponent<Animator>().enabled = isAnimating;
             GetComponent<CharacterController>().enabled = isAnimating;
         }
@@ -477,16 +468,5 @@ namespace StarterAssets
             MoveSpeed = baseMoveSpeed;
             SprintSpeed = baseSprintSpeed;
         }
-
-        /*private void OnControllerColliderHit(ControllerColliderHit hit)
-        {
-            Debug.Log("Collision detected");
-            Debug.Log(hit.gameObject.name);
-            if (!isRagdoll && hit.gameObject.CompareTag("Projectile"))
-            {
-                TriggerRagdoll(false);
-                StartCoroutine(Respawn());
-            }
-        }*/
     }
 }

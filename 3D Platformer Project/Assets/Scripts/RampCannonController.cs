@@ -35,6 +35,7 @@ public class RampCannonController : MonoBehaviour
             pooledProjectile.SetActive(true);
             int rand_spawn = Random.Range(0, num_spawn_locations);
             pooledProjectile.transform.position = spawn_locations[rand_spawn];
+            pooledProjectile.transform.eulerAngles = new Vector3(30,0,0);
             Rigidbody proj = pooledProjectile.GetComponent<Rigidbody>();
             proj.velocity = Vector3.zero;
             proj.angularVelocity = Vector3.zero;

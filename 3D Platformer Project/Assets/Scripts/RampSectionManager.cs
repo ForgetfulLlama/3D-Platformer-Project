@@ -49,5 +49,9 @@ public class RampSectionManager : MonoBehaviour
         {
             other.gameObject.SetActive(false);
         }
+        else if (other.CompareTag("Car"))
+        {
+            other.transform.parent.transform.parent.gameObject.SetActive(false);
+        }
     }
 }

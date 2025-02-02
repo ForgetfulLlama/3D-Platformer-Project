@@ -52,8 +52,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 7.9969764}
-  m_Center: {x: 0, y: 0, z: 3.4984891}
+  m_Size: {x: 2, y: 2, z: 23.93717}
+  m_Center: {x: -4.9291625e-14, y: 0, z: 11.468588}
 --- !u!114 &2563968487164490926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,10 +66,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7bd4b685cf77044c9d2fbb812e970ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  proj_prefab: {fileID: 1584009327220539660, guid: 503f411675c04ed449dd3411fd86bb22, type: 3}
-  cannon_body: {fileID: 7016279346369192798}
+  is_active: 1
+  proj_prefab: {fileID: 8425306388277381829, guid: 628fd130bc6e1ae45b1b21814c8dff97, type: 3}
   spawn_delay: 1
-  proj_speed: 20
+  proj_speed: 250
+  startup_delay: 0
 --- !u!1 &5824409674253803390
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +205,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
