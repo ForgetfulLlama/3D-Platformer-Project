@@ -6,6 +6,7 @@ using UnityEngine;
 public class EndZone : MonoBehaviour
 {
     [SerializeField] private float launch_delay;
+    public GameManager manager;
     private CannonController cannon;
     // Start is called before the first frame update
     void Start()
@@ -15,9 +16,10 @@ public class EndZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && manager.count_time)
         {
             StartCoroutine(LaunchCountdown());
+            manager.StopTimer();
         }
     }
 
