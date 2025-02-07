@@ -6,6 +6,8 @@ using UnityEngine;
 public class TranslatePlatform : MonoBehaviour
 {
     private float startPoint;
+    private Vector3 og_pos;
+    private Vector3 end_pos;
     [SerializeField] private float moveRange;
     [SerializeField] private float speed;
     private float endpoint;
@@ -16,25 +18,36 @@ public class TranslatePlatform : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        og_pos = transform.position;
+        end_pos = og_pos;
         switch (axis)
         {
             case "x":
                 startPoint = transform.position.x;
+                end_pos.x += moveRange;
                 break;
             case "y":
                 startPoint = transform.position.y;
+                end_pos.y += moveRange;
                 break;
             case "z":
                 startPoint = transform.position.z;
+                end_pos.z += moveRange;
                 break;
             case "xy":
                 startPoint = transform.position.x;
+                end_pos.x += moveRange;
+                end_pos.y += moveRange;
                 break;
             case "yz":
                 startPoint = transform.position.y;
+                end_pos.y += moveRange;
+                end_pos.z += moveRange;
                 break;
             case "xz":
                 startPoint = transform.position.z;
+                end_pos.x += moveRange;
+                end_pos.z += moveRange;
                 break;
             default:
                 break;
@@ -44,6 +57,9 @@ public class TranslatePlatform : MonoBehaviour
         {
             endpoint = startPoint;
             startPoint = endpoint + moveRange;
+            Vector3 tmp = og_pos;
+            og_pos = end_pos;
+            end_pos = tmp;
             speed *= -1;
         }
 
@@ -94,12 +110,14 @@ public class TranslatePlatform : MonoBehaviour
         }
         if (currPos > endpoint)
         {
-            transform.position = CorrectPosition(axis, endpoint);
+            transform.position = end_pos;
+            //transform.position = CorrectPosition(axis, endpoint);
             FlipDirection();
         }
         else if (currPos < startPoint)
         {
-            transform.position = CorrectPosition(axis, startPoint);
+            transform.position = og_pos;
+            //transform.position = CorrectPosition(axis, startPoint);
             FlipDirection();
         }
         transform.Translate(direction * speed * Time.deltaTime);

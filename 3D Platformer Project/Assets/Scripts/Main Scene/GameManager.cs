@@ -12,12 +12,12 @@ public class GameManager : MonoBehaviour
     private float timer;
     private float minutes;
     private float seconds;
-    private string timer_str;
     public bool count_time { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
         timer = 0.0f;
+        //best_time_text.text = "Best Time: " + MainManager.Instance.best_str;
     }
 
     // Update is called once per frame
@@ -45,5 +45,12 @@ public class GameManager : MonoBehaviour
     public void StopTimer()
     {
         count_time = false;
+        if (timer <= MainManager.Instance.best_time || MainManager.Instance.best_str == "")
+        {
+            MainManager.Instance.UpdateBestTime(timer);
+            MainManager.Instance.Save();
+            best_time_text.text = "Best Time: " + MainManager.Instance.best_str;
+        }
+        
     }
 }
