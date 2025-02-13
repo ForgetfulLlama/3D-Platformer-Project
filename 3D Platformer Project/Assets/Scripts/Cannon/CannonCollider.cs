@@ -11,7 +11,6 @@ public class CannonCollider : CannonController
             if (is_active)
             {
                 other.gameObject.SetActive(false);
-                //StartCoroutine(StartSpawn());
             }
         }
     }
