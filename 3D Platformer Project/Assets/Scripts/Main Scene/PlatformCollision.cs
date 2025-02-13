@@ -7,7 +7,7 @@ public class PlatformCollision : MonoBehaviour
     [SerializeField] Transform platform;
     [SerializeField] string playerTag = "Player";
     private Transform originalParent;
-    // Start is called before the first frame update
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(playerTag))

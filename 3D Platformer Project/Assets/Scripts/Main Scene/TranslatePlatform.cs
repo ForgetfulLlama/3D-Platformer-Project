@@ -111,40 +111,14 @@ public class TranslatePlatform : MonoBehaviour
         if (currPos > endpoint)
         {
             transform.position = end_pos;
-            //transform.position = CorrectPosition(axis, endpoint);
             FlipDirection();
         }
         else if (currPos < startPoint)
         {
             transform.position = og_pos;
-            //transform.position = CorrectPosition(axis, startPoint);
             FlipDirection();
         }
         transform.Translate(direction * speed * Time.deltaTime);
-    }
-    
-    private Vector3 CorrectPosition(string axis, float fixedPos)
-    {
-        float xPos = transform.position.x;
-        float yPos = transform.position.y;
-        float zPos = transform.position.z;
-        switch (axis)
-        {
-            case "x":
-                return new Vector3(fixedPos, yPos, zPos);
-            case "y":
-                return new Vector3(xPos, fixedPos, zPos);
-            case "z":
-                return new Vector3(xPos, yPos, fixedPos);
-            case "xy":
-                return new Vector3(fixedPos, yPos, zPos);
-            case "yz":
-                return new Vector3(xPos, fixedPos, zPos);
-            case "xz":
-                return new Vector3(xPos, yPos, fixedPos);
-            default:
-                return Vector3.zero;
-        }
     }
 
     private void FlipDirection()

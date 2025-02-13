@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         timer = 0.0f;
-        //best_time_text.text = "Best Time: " + MainManager.Instance.best_str;
+        best_time_text.text = "Best Time: " + MainManager.Instance.best_str;
     }
 
     // Update is called once per frame

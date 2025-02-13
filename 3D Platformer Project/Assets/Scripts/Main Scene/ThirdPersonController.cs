@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-#if ENABLE_INPUT_SYSTEM 
+using UnityEditor.Rendering;
+
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
@@ -107,11 +109,15 @@ namespace StarterAssets
         private Vector3 active_checkpoint_pos;
         private Vector3 spawn_pos;
 
-        //Ragdoll stuff
+        //Ragdoll values
         private Rigidbody[] rigidbodies;
         private Collider[] colliders;
         private bool isRagdoll;
         private float spawn_delay = 3.0f;
+
+        //Pause values
+        public bool paused;
+        [SerializeField] private GameObject pause_menu;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -181,7 +187,7 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
             _controllerActive = GetComponent<CharacterController>().enabled;
-
+            CheckPause();
             if (_controllerActive)
             {
                 JumpAndGravity();
@@ -192,7 +198,10 @@ namespace StarterAssets
 
         private void LateUpdate()
         {
-            CameraRotation();
+            if (!paused)
+            {
+                CameraRotation();
+            }
         }
 
         private void AssignAnimationIDs()
@@ -415,6 +424,33 @@ namespace StarterAssets
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+            }
+        }
+
+
+
+        private void CheckPause()
+        {
+            if (_input.pause)
+            {
+                paused = TogglePause();
+                _input.pause = false;
+            }
+        }
+
+        public bool TogglePause()
+        {
+            if (!paused)
+            {
+                Time.timeScale = 0f;
+                pause_menu.SetActive(true);
+                return true;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+                pause_menu.SetActive(false);
+                return false;
             }
         }
 
