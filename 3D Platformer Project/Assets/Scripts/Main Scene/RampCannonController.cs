@@ -9,7 +9,8 @@ public class RampCannonController : MonoBehaviour
     private int num_spawn_locations = 7;
     [SerializeField] private float spawn_delay;
     [SerializeField] private bool spawning;
-    [SerializeField] private float proj_speed = 100;
+    [SerializeField] private float base_speed = 500;
+    private float speed_range = 150;
 
     // Update is called once per frame
     void Update()
@@ -34,7 +35,8 @@ public class RampCannonController : MonoBehaviour
             Rigidbody proj = pooledProjectile.GetComponent<Rigidbody>();
             proj.velocity = Vector3.zero;
             proj.angularVelocity = Vector3.zero;
-            Vector3 launch_angle = new Vector3(0, -1, 1);
+            Vector3 launch_angle = new Vector3(Random.Range(-.8f,.8f), -1f, 1f);
+            float proj_speed = Random.Range(base_speed - speed_range, base_speed + speed_range);
             proj.AddForce(launch_angle * proj_speed, ForceMode.Impulse);
         }
         spawning = false;

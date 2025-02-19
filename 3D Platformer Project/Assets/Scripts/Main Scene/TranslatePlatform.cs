@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TranslatePlatform : MonoBehaviour
 {
+    public bool active;
     private float startPoint;
     private Vector3 og_pos;
     private Vector3 end_pos;
@@ -68,7 +69,7 @@ public class TranslatePlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!platform_paused)
+        if (!platform_paused && active)
         {
             MovePlatform();
         }

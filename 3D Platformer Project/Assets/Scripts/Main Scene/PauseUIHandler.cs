@@ -15,7 +15,7 @@ public class PauseUIHandler : MonoBehaviour
 
     public void Return()
     {
-        Resume();
+        Time.timeScale = 1.0f;
         SceneManager.LoadScene(0);
     }
 }

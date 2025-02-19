@@ -35,9 +35,11 @@ namespace StarterAssets
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
 
+        public AudioClip hitSound;
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
+        [Range(0, 1)] public float HitAudioVolume = 1f;
 
         [Space(10)]
         [Tooltip("The height the player can jump")]
@@ -111,13 +113,13 @@ namespace StarterAssets
 
         //Ragdoll values
         private Rigidbody[] rigidbodies;
-        private Collider[] colliders;
         private bool isRagdoll;
         private float spawn_delay = 3.0f;
 
         //Pause values
         public bool paused;
         [SerializeField] private GameObject pause_menu;
+        [SerializeField] private GameObject esc_text;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -163,6 +165,7 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
+
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -179,7 +182,6 @@ namespace StarterAssets
             baseSprintSpeed = SprintSpeed;
 
             rigidbodies = GetComponentsInChildren<Rigidbody>();
-            colliders = GetComponentsInChildren<Collider>();
             TriggerRagdoll(true);
         }
 
@@ -434,6 +436,7 @@ namespace StarterAssets
             if (_input.pause)
             {
                 paused = TogglePause();
+                _input.paused = paused;
                 _input.pause = false;
             }
         }
@@ -444,12 +447,16 @@ namespace StarterAssets
             {
                 Time.timeScale = 0f;
                 pause_menu.SetActive(true);
+                _input.SetCursorState(false);
+                esc_text.SetActive(false);
                 return true;
             }
             else
             {
                 Time.timeScale = 1f;
                 pause_menu.SetActive(false);
+                _input.SetCursorState(true);
+                esc_text.SetActive(true);
                 return false;
             }
         }
@@ -478,10 +485,14 @@ namespace StarterAssets
 
         public void CollisionDetected(Collider collision) 
         {
-            if (!isRagdoll && (collision.CompareTag("Projectile") || collision.CompareTag("Car")))
+            if (collision.CompareTag("Projectile") || collision.CompareTag("Car"))
             {
-                TriggerRagdoll(false);
-                StartCoroutine(Respawn());
+                AudioSource.PlayClipAtPoint(hitSound, transform.TransformPoint(_controller.center), HitAudioVolume);
+                if (!isRagdoll)
+                {
+                    TriggerRagdoll(false);
+                    StartCoroutine(Respawn());
+                }
             }
         }
 
