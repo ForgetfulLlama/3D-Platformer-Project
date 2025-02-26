@@ -7,7 +7,7 @@ public class SpawnCollider : MonoBehaviour
     public GameManager manager;
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && !manager.count_time)
+        if (other.CompareTag("Player"))
         {
             manager.StartTimer();
         }
